@@ -1,9 +1,8 @@
-import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 
 export type BudgetCategory = {
-    id: string,
-    category: string,
+    name: string,
+    userId: string
 };
 
 type State = {
@@ -20,7 +19,8 @@ export const useBudgetCategoriesStore = defineStore({
   getters: {
   },
   actions: {
-    loadCategories() { 
+    createCategory(budgetCategory: BudgetCategory): void {
+      this.categories.set(`${this.categories.size}`, budgetCategory);
     }
   }
 });

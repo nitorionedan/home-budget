@@ -1,20 +1,31 @@
 <script setup lang="ts">
-defineProps<{
-    category: string,
+import { useUserAccountsStore } from "@/stores/userAccounts";
+
+const props = defineProps<{
+    categoryName: string,
+    expenseId: string,
     name: string,
     amount: number,
     date: string
 }>();
+
+const userStore = useUserAccountsStore();
+
+function deleteExpense(): void {
+    console.log("消す: " + props.expenseId);
+    userStore.deleteExpense(props.expenseId);
+
+}
 </script>
 
 <template>
     <div class="card-frame">
-        <div class="category">{{ category }}</div>
+        <div class="category">{{ categoryName }}</div>
         <div class="name">{{ name }}</div>
         <div class="amount">{{ amount }}</div>
         <div class="date">{{ date }}</div>    
         <div class="delete-button">
-            <button class="delete-button">🗑</button>
+            <button class="delete-button" @click="deleteExpense">🗑</button>
         </div>
     </div>
 </template>
@@ -22,10 +33,13 @@ defineProps<{
 <style scoped>
 .card-frame {
     width: 100%;
-    background-color: #E8E8E8;
+    border: solid 1px var(--white);
+    transition: 0.3s;
+}
+
+.card-frame:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    /* margin: 15px 15px 15px 15px; */
-    /* margin-right: 15px; */
+    cursor: pointer;
 }
 
 .category {
@@ -43,7 +57,7 @@ defineProps<{
 
 .date {
     text-align: center;
-    color: #8A8A8A;
+    color: var(--color-text-subtitle);
 }
 
 .delete-button {

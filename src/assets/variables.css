@@ -1,0 +1,27 @@
+:root {
+    /* 参考
+    *  https://m3.material.io/styles/color/the-color-system/key-colors-tones
+    */
+
+    /* Accents */
+    --color-primary: #66C4D1;
+    --color-accent: #3295A3;
+ 
+    /* Neutrals */
+    --black: black;
+    --gray-5: #2a2a2a;
+    --gray-4: #8A8A8A;
+    --white: #E8E8E8;
+
+    /* Feedbacks */
+    --color-success: blue;
+    --color-error: red;
+    --color-warning: yellow;
+
+    /* Typographies */
+    --color-text: var(--gray-5);
+    --color-text-heading: var(--black);
+    --color-text-subtitle: var(--gray-4);
+    --color-link: var(white);
+    --color-link-visited: var(--color-accent);
+}

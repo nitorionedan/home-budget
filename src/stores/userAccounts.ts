@@ -1,5 +1,6 @@
-import { ArgumentNullError } from "@/utilities/exceptions";
 import { defineStore } from "pinia";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 export type UserAccount = {
     id: string,
@@ -27,44 +28,63 @@ export type BudgetCategory = {
 
 type State = {
     userAccounts: UserAccount[],
-    currentUser: UserAccount
+    currentId: string,
 };
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID
+};
+  
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+function currentUserIndex(userId: string, users: UserAccount[]): number {
+    const index = users.findIndex((user) => user.id === userId);
+    if (index === -1) {
+        throw new Error(`ユーザーID${userId}は存在しません。`);
+    }
+
+    return index;
+}
 
 export const useUserAccountsStore = defineStore({
     id: "userAccounts",
     state: (): State => {
         return {
             userAccounts: [] as UserAccount[],
-            currentUser: {
-                id: "",
-                pw: "",
-                name: "",
-                email: "",
-                expenses: [] as Expense[],
-                budgetCategories: [] as BudgetCategory[]
-            }
+            currentId: ""
         }
     },
     getters: {
-        // currentExpenses: (state) => {
-        //     const expenses = [...state.currentUser.expenseMap];
-        //     const budgetCategories = state.currentUser.budgetCategoryMap;
-        //     const t = expenses.map(([id, expense]) => {
-        //         const budgetCategory = budgetCategories.get(expense.categoryId);
-        //         if (budgetCategories === undefined) {
-        //             throw new Error(`予算カテゴリID${expense.categoryId}に対する予算カテゴリがありません。`);
-        //         }
-        //         return {expense: expense, budgetCategory: budgetCategory}
-        //     });
-        // },
+        currentExpenses: (state): Expense[] => {
+            const index = state.userAccounts.findIndex((user) => user.id === state.currentId);
+            if (index === -1) {
+                throw new Error(`ユーザーID${state.currentId}は存在しません。`);
+            }
+            
+            return state.userAccounts[index].expenses;
+        },
 
-        // currentBudgetCategories: (state): Map<string, BudgetCategory> => {
-        //     if (state.currentUser.budgetCategoryMap == undefined) {
-        //         state.currentUser.budgetCategoryMap = new Map<string, BudgetCategory>();
-        //     }
-
-        //     return state.currentUser.budgetCategoryMap;
-        // },
+        currentBudgetCategories: (state): BudgetCategory[] => {
+            const index = state.userAccounts.findIndex((user) => user.id === state.currentId);
+            if (index === -1) {
+                throw new Error(`ユーザーID${state.currentId}は存在しません。`);
+            }
+            
+            return state.userAccounts[index].budgetCategories;
+        },
     },
     actions: {
         // テスト用データ用意
@@ -77,7 +97,7 @@ export const useUserAccountsStore = defineStore({
             this.userAccounts.push(user1);
             this.userAccounts.push(user2);
             this.userAccounts.push(user3);
-            this.setCurrentUser("id1");
+            this.currentId = user1.id;
 
             // カテゴリ
             user1.budgetCategories.push({ id: user1.budgetCategories.length.toString(), name: "食費", userId: user1.id });
@@ -90,19 +110,6 @@ export const useUserAccountsStore = defineStore({
             user1.expenses.push({ id: user1.expenses.length.toString(), name: "昼ご飯", amount: 300, date: "2023/4/19", userId: user1.id, categoryId: user1.budgetCategories[0].id });
         },
 
-        setCurrentUser(userId: string): void {
-            const index = this.userAccounts.findIndex((user) => user.id === userId);
-            const defaultuser: UserAccount = {
-                id: "",
-                pw: "",
-                name: "",
-                email: "",
-                expenses: [],
-                budgetCategories: []
-            };
-            this.currentUser = index === -1 ? defaultuser : this.userAccounts[index];
-        },
-
         clearAllTestData(): void {
             this.userAccounts.splice(0);
             const emptyUser: UserAccount = {
@@ -113,9 +120,16 @@ export const useUserAccountsStore = defineStore({
                 expenses: [],
                 budgetCategories: []
             };
-            this.currentUser.expenses.splice(0);
-            this.currentUser.budgetCategories.splice(0);
-            this.currentUser = emptyUser;
+        },
+
+        deleteExpense(expenseId: string): void {
+            const index = currentUserIndex(this.currentId, this.userAccounts);
+            const expenseIndex = this.userAccounts[index].expenses.findIndex((expense) => expense.id === expenseId);
+            if (expenseIndex === -1) {
+                console.log(`支出ID${expenseId}はすでに存在しません。`);
+            }
+
+            this.userAccounts[index].expenses.splice(expenseIndex, 1);
         },
     }
 });

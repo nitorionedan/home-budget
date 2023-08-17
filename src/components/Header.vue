@@ -17,12 +17,11 @@ const strings = computed((): Strings => useStringsStore().strings);
 <style scoped>
 .topnav {
     overflow: hidden;
-    background-color: #66C4D1;
+    background-color: var(--color-primary);
     display: block;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     width: 100%;
-    height: 45px;
-    margin: 0;
+    margin-bottom: 10px;
     padding: 0;
     /* position: fixed; */
 }
@@ -31,11 +30,12 @@ const strings = computed((): Strings => useStringsStore().strings);
     float: right;
     text-align: center;
     text-decoration: none;
-    padding: 10px 16px;
-    color: white;
+    padding: 16px;
+    color: var(--white);
     transition: 0.3s;
 }
+
 .topnav > a:hover {
-    background-color: #3295A3;
+    background-color: var(--color-accent);
 }
 </style>

@@ -21,18 +21,6 @@ export const useExpensesStore = defineStore({
         }
     },
     getters: {
-        // byUserId: (state): Map<string, Expense> => {
-        //     const userStore = useUserAccountsStore();
-        //     const userIds = [...userStore.userAccounts].map(([id, account]) => id);
-        //     const array = [...state.expenses];
-        //     const expensesByUserId = array.filter(([id, expense]) => {
-        //         const matchUserId = (userId: string) => { userId === userStore.currentUser.id };
-        //         console.log(`compare: ${ id }`);
-        //         return userIds.some(matchUserId);
-        //     });
-            
-        //     return new Map(expensesByUserId.map(([id, expense]) => [id, expense]));
-        // },
     },
     actions: {
         createExpense(expense: Expense): void {

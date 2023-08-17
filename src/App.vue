@@ -17,5 +17,6 @@ onBeforeMount((): void => {
   <RouterView />
 </template>
 
-<style scoped>
+<style>
+@import url(@/assets/variables.css);
 </style>

@@ -7,7 +7,7 @@ const usersStore = useUserAccountsStore();
 const expenses = computed(() => usersStore.currentExpenses);
 const budgetCategories = computed(() => usersStore.currentBudgetCategories);
 
-function budgetCategoryNameById(categoryId: string): string {
+function budgetCategoryName(categoryId: string): string {
     const index = budgetCategories.value.findIndex((category) => category.id === categoryId);
     if (index === -1) {
         console.log(`予算カテゴリID（${categoryId}）がみつかりません。`);
@@ -17,24 +17,25 @@ function budgetCategoryNameById(categoryId: string): string {
     return budgetCategories.value[index].name;
 }
 
-function createTestData(): void {
+function deleteExpenseData(): void {
     usersStore.prepareTestData();
 }
 
-function clearAllUserDatas(): void {
-    usersStore.clearAllTestData();
+function deleteAllExpenseDatas(): void {
+    usersStore.deleteAll();
 }
 
-createTestData();
+// テスト用データを作る
+// createTestData();
 </script>
 
 <template>
-    <button @click="createTestData">サンプルデータ追加</button>
-    <button @click="clearAllUserDatas">サンプルデータ削除</button>
+    <button @click="deleteExpenseData">サンプルデータ追加</button>
+    <button @click="deleteAllExpenseDatas">サンプルデータ削除</button>
     <div v-if="expenses.length > 0">
         <div class="row">
             <div class="col-3" v-for="(expense, id) in expenses" :key="id">
-                <ExpenseCard :expense-id="expense.id" :category-name="budgetCategoryNameById(expense.categoryId)" :name="expense.name" :amount="expense.amount" :date="expense.date"></ExpenseCard>
+                <ExpenseCard :expense-id="expense.id" :category-name="budgetCategoryName(expense.categoryId)" :name="expense.name" :amount="expense.amount" :date="expense.date"></ExpenseCard>
             </div>
         </div>
     </div>

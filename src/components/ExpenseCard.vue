@@ -12,14 +12,12 @@ const props = defineProps<{
 const userStore = useUserAccountsStore();
 
 function deleteExpense(): void {
-    console.log("消す: " + props.expenseId);
-    userStore.deleteExpense(props.expenseId);
-
+    userStore.delete(props.expenseId);
 }
 </script>
 
 <template>
-    <div class="card-frame">
+    <div class="card-frame fadeout">
         <div class="category">{{ categoryName }}</div>
         <div class="name">{{ name }}</div>
         <div class="amount">{{ amount }}</div>
@@ -37,10 +35,10 @@ function deleteExpense(): void {
     transition: 0.3s;
 }
 
-.card-frame:hover {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    cursor: pointer;
-}
+    .card-frame:hover {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        cursor: pointer;
+    }
 
 .category {
     /* border: solid 1px black; */

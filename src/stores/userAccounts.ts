@@ -59,6 +59,7 @@ function currentUserIndex(userId: string, users: UserAccount[]): number {
   return index;
 }
 
+// UserAccount Store
 export const useUserAccountsStore = defineStore({
   id: 'userAccounts',
   state: (): State => {
@@ -69,6 +70,7 @@ export const useUserAccountsStore = defineStore({
   },
 
   getters: {
+    // Expenses list
     currentExpenses: (state): Expense[] => {
       const index: number = state.userAccounts.findIndex((user) => user.id === state.currentId);
 
@@ -81,10 +83,14 @@ export const useUserAccountsStore = defineStore({
       return state.userAccounts[index].expenses;
     },
 
+    // BudgetCategory list
     currentBudgetCategories: (state): BudgetCategory[] => {
       const index: number = state.userAccounts.findIndex((user) => user.id === state.currentId);
+
+      // カテゴリーがなければ何もしない
       if (index === -1) {
-        throw new Error(`ユーザーID${state.currentId}は存在しません。`);
+        console.log(`ユーザーID${state.currentId}は存在しません。`);
+        return [];
       }
       
       return state.userAccounts[index].budgetCategories;
@@ -92,27 +98,120 @@ export const useUserAccountsStore = defineStore({
   },
 
   actions: {
-    // テスト用データ用意
+    // DEBUG: テスト用データ用意
     prepareTestData(): void {
       // アカウント
+      // 一旦アカウントデータを削除する
       this.userAccounts.splice(0);
-      const user1: UserAccount = { id: "id1", pw: "pw1", name: "user1", email: "user1@hoge", expenses: [], budgetCategories: [] };
-      const user2: UserAccount = { id: "id2", pw: "pw2", name: "user2", email: "user2@hoge", expenses: [], budgetCategories: [] };
-      const user3: UserAccount = { id: "id3", pw: "pw3", name: "user3", email: "user3@hoge", expenses: [], budgetCategories: [] };
-      this.userAccounts.push(user1);
-      this.userAccounts.push(user2);
-      this.userAccounts.push(user3);
-      this.currentId = user1.id;
+      this.createUserAccount({ 
+        id: 'id1', 
+        pw: 'pw1', 
+        name: 'user1', 
+        email: 'user1@hoge', 
+        expenses: [], 
+        budgetCategories: []
+      });
+      this.createUserAccount({ 
+        id: 'id2', 
+        pw: 'pw2', 
+        name: 'user2', 
+        email: 'user2@hoge', 
+        expenses: [], 
+        budgetCategories: [] 
+      });
+      this.createUserAccount({ 
+        id: 'id3', 
+        pw: 'pw3', 
+        name: 'user3', 
+        email: 'user3@hoge', 
+        expenses: [], 
+        budgetCategories: [] 
+      });
 
       // カテゴリ
-      user1.budgetCategories.push({ id: user1.budgetCategories.length.toString(), name: "食費", userId: user1.id });
-      user1.budgetCategories.push({ id: user1.budgetCategories.length.toString(), name: "交通費", userId: user1.id });
-      user1.budgetCategories.push({ id: user1.budgetCategories.length.toString(), name: "雑費", userId: user1.id });
+      const userAccountIdx: number = 
+        this.userAccounts.findIndex((userAccount) => userAccount.id === this.currentId);
+      const userAccount: UserAccount = this.userAccounts[userAccountIdx];
+
+      this.createBudgetCategory({ 
+        id: `bc${this.currentBudgetCategories.length}`,
+        name: '食費', 
+        userId: userAccount.id
+      });
+      this.createBudgetCategory({ 
+        id: `bc${this.currentBudgetCategories.length}`,
+        name: '交通費', 
+        userId: userAccount.id
+      });
+      this.createBudgetCategory({ 
+        id: `bc${this.currentBudgetCategories.length}`,
+        name: '雑費', 
+        userId: userAccount.id
+      });
 
       // 支出
-      user1.expenses.push({ id: user1.expenses.length.toString(), name: "買い物", amount: 100, date: "2023/4/19", userId: user1.id, categoryId: user1.budgetCategories[0].id });
-      user1.expenses.push({ id: user1.expenses.length.toString(), name: "夜ご飯", amount: 200, date: "2023/4/19", userId: user1.id, categoryId: user1.budgetCategories[0].id });
-      user1.expenses.push({ id: user1.expenses.length.toString(), name: "昼ご飯", amount: 300, date: "2023/4/19", userId: user1.id, categoryId: user1.budgetCategories[0].id });
+      this.createExpense({ 
+        id: `bc${this.currentExpenses.length}`,
+        name: '買い物', 
+        amount: 100, 
+        date: '2023/4/19', 
+        userId: this.currentId,
+        categoryId: userAccount.budgetCategories[0].id 
+      });
+      this.createExpense({ 
+        id: `bc${this.currentExpenses.length}`,
+        name: '夜ご飯', 
+        amount: 200, 
+        date: '2023/4/19', 
+        userId: this.currentId,
+        categoryId: userAccount.budgetCategories[0].id 
+      });
+      this.createExpense({ 
+        id: `bc${this.currentExpenses.length}`,
+        name: '昼ご飯', 
+        amount: 300, 
+        date: '2023/4/19', 
+        userId: this.currentId,
+        categoryId: userAccount.budgetCategories[0].id 
+      });
+    },
+
+    // ユーザーアカウントデータ作成
+    createUserAccount(newUserAccount: UserAccount): void {
+      this.userAccounts.push(newUserAccount);
+
+      // DEBUG: 追加したアカウントのIDを現在のIDに設定する
+      this.currentId = newUserAccount.id;
+    },
+
+    // 支出データの作成
+    createExpense(expense: Expense): void {
+      // アカウントデータがなければ何もしない
+      if (Array.isArray(this.userAccounts) && !this.userAccounts.length) {
+        return;
+      } 
+
+      // 支出データ追加
+      // let userAccount = this.userAccounts[parseInt(this.currentId)];
+      const userAccountIdx: number = 
+      this.userAccounts.findIndex((userAccount) => userAccount.id === this.currentId);
+      let userAccount: UserAccount = this.userAccounts[userAccountIdx];
+      userAccount.expenses.push(expense);
+    },
+
+    // 予算カテゴリーの作成
+    createBudgetCategory(budgetCategory: BudgetCategory): void {
+      // アカウントデータがなければ何もしない
+      if (Array.isArray(this.userAccounts) && !this.userAccounts.length) {
+        return;
+      }
+
+      // 予算カテゴリー追加
+      // let userAccount = this.userAccounts[parseInt(this.currentId)];
+      const userAccountIdx: number = 
+      this.userAccounts.findIndex((userAccount) => userAccount.id === this.currentId);
+      let userAccount: UserAccount = this.userAccounts[userAccountIdx];
+      userAccount.budgetCategories.push(budgetCategory);
     },
 
     // テスト用データすべてを削除する
@@ -122,7 +221,7 @@ export const useUserAccountsStore = defineStore({
         return;
       }
 
-      // 削除処理：アカウントデータ毎の支出データ分ループ
+      // 削除前処理：アカウントデータ毎の支出データのIDを収集
       let expenseIdList: string[] = [];
       for (let userAccountIdx = 0; userAccountIdx < this.userAccounts.length; userAccountIdx++) {
         const expenses: Expense[] = this.userAccounts[userAccountIdx].expenses;
@@ -132,6 +231,7 @@ export const useUserAccountsStore = defineStore({
         }
       }
     
+      // 削除処理：全支出データを削除
       for (let i = 0; i < expenseIdList.length; i++) {
         this.delete(expenseIdList[i].toString());
       }

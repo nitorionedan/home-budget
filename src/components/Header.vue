@@ -8,9 +8,9 @@ const strings = computed((): Strings => useStringsStore().strings);
 
 <template>
     <div class="topnav">
-        <RouterLink to="/">{{ strings.topnav_list }}</RouterLink>
-        <RouterLink to="chart">{{ strings.topnav_chart }}</RouterLink>
         <RouterLink to="setting">{{ strings.topnav_setting }}</RouterLink>
+        <RouterLink to="chart">{{ strings.topnav_chart }}</RouterLink>
+        <RouterLink to="/">{{ strings.topnav_list }}</RouterLink>
     </div>
 </template>
 

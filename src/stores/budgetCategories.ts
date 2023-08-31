@@ -8,6 +8,8 @@ type State = {
   categories: Map<string, BudgetCategory>
 };
 
+var idCount: number = 0;
+
 // Budget Category Store
 export const useBudgetCategoriesStore = defineStore('budgetCategories', {
   state: (): State => {
@@ -23,7 +25,8 @@ export const useBudgetCategoriesStore = defineStore('budgetCategories', {
   actions: {
     // カテゴリー新規作成
     createCategory(budgetCategory: BudgetCategory): void {
-      this.categories.set(`${this.categories.size}`, budgetCategory);
+      idCount++;
+      this.categories.set(idCount.toString(), budgetCategory);
     },
 
     // カテゴリー情報を更新

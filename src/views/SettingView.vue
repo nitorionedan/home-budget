@@ -11,8 +11,8 @@ function OnClickTestAddCategoryButton(): void {
   budgetCategoriesStore.createCategory(budgetTmp);
 }
 
-function OnClickTestDeleteCategoryButton(): void {
-    budgetCategoriesStore.deleteCategory(testDeleteTargetText.value);
+function OnClickTestDeleteCategoryButton(id: string): void {
+    budgetCategoriesStore.deleteCategory(id);
 }
 </script>
 
@@ -23,9 +23,9 @@ function OnClickTestDeleteCategoryButton(): void {
   <input type="text" v-model="testText"/>
   <button @click="OnClickTestAddCategoryButton">Adding Test</button>
 
-  <p>test delete target: {{ testDeleteTargetText }}</p>
+  <!-- <p>test delete target: {{ testDeleteTargetText }}</p>
   <input type="text" v-model="testDeleteTargetText"/>
-  <button @click="OnClickTestDeleteCategoryButton">Delete Test</button>
+  <button @click="OnClickTestDeleteCategoryButton">Delete Test</button> -->
 
   <table class="table">
     <thead>
@@ -38,7 +38,9 @@ function OnClickTestDeleteCategoryButton(): void {
     <tbody>
       <tr v-for="([key, category], index) in budgetCategoriesStore.readCategories" :key="index">
         <td>{{ category.name }}</td>
-        <td>unko1</td>
+        <td>
+          <button @click="OnClickTestDeleteCategoryButton(key)">{{ key }}</button>
+        </td>
         <td>unko2</td>
       </tr>
     </tbody>

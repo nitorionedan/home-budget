@@ -11,7 +11,7 @@ function budgetCategoryName(categoryId: string): string {
     const index = budgetCategories.value.findIndex((category) => category.id === categoryId);
     if (index === -1) {
         console.log(`予算カテゴリID（${categoryId}）がみつかりません。`);
-        return "";
+        return '';
     }
 
     return budgetCategories.value[index].name;
@@ -46,7 +46,7 @@ function deleteAllExpenseDatas(): void {
 
 <style scoped>
 .row::after {
-  content: "";
+  content: '';
   clear: both;
   display: block;
 }
